@@ -21,13 +21,13 @@ export const GuardarCarta = (
       fs.mkdir(directorioUsuario, { recursive: true }, (err) => {
         if (err) {
           callback(
-            `Error al crear el directorio del usuario: ${err}`,
+            `Error al crear el directorio del usuario`,
             undefined,
           );
         } else {
           fs.writeFile(rutaCarta, JSON.stringify(carta), (err) => {
             if (err) {
-              callback(`Error al guardar la carta: ${err.message}`, undefined);
+              callback(`Error al guardar la carta no se guarda `, undefined);
             } else {
               callback(
                 undefined,
@@ -40,7 +40,7 @@ export const GuardarCarta = (
     } else {
       fs.writeFile(rutaCarta, JSON.stringify(carta), (err) => {
         if (err) {
-          callback(`Error al guardar la carta: ${err.message}`, undefined);
+          callback(`Error al guardar la carta `, undefined);
         } else {
           callback(
             undefined,

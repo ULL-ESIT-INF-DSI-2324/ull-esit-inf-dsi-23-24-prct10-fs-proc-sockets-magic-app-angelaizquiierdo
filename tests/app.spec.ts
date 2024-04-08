@@ -18,13 +18,13 @@ describe("GuardarCarta function tests", () => {
 
     GuardarCarta(usuario, carta, (error, mensaje) => {
       expect(error).to.be.undefined; // No debe haber errores
-      expect(mensaje).to.equal("La carta ha sido guardada correctamente."); // Mensaje de éxito esperado
+      expect(mensaje).to.equal("Se ha guardado correctamente en el usuario:  test_user"); // Mensaje de éxito esperado
       done();
     });
   });
 
-  it("Should provide an error if failed to save a card", (done) => {
-    const usuario = "test_user";
+  it("Should provide an error if user directory does not exist", (done) => {
+    const usuario = "non_existing_user";
     const carta: Carta = {
       id: 2,
       nombre: "Otra Carta de Prueba",
@@ -37,7 +37,53 @@ describe("GuardarCarta function tests", () => {
     };
 
     // Forzar un error al intentar guardar la carta
-    // Esto simula una situación en la que no se puede escribir en el directorio
+    // Simulando una situación en la que el directorio del usuario no existe
+    // Esto debería proporcionar un mensaje de error
+    GuardarCarta(usuario, carta, (error, mensaje) => {
+      expect(error).to.be.equal("jkdhsahd"); // Debe haber un error
+      expect(mensaje).to.be.undefined; // El mensaje debe ser indefinido
+      done();
+    });
+  });
+
+  it("Should provide an error if failed to save a card due to permission issues", (done) => {
+    const usuario = "test_user";
+    const carta: Carta = {
+      id: 3,
+      nombre: "usuario1",
+      costeMana: 4,
+      color: Color.Verde,
+      Lineatipo: LineaTipo.Criatura,
+      rareza: Rareza.Infrecuente,
+      textoReglas: "Texto de reglas de carta con problemas de permiso",
+      valorMercado: 10,
+    };
+
+    // Forzar un error al intentar guardar la carta
+    // Simulando una situación en la que no se pueden cambiar los permisos del directorio del usuario
+    // Esto debería proporcionar un mensaje de error
+    GuardarCarta(usuario, carta, (error, mensaje) => {
+      expect(error).to.be.equal("jshdkha"); // Debe haber un error
+      expect(mensaje).to.be.undefined; // El mensaje debe ser indefinido
+      done();
+    });
+  });
+
+  it("Should provide an error if the card ID is already used", (done) => {
+    const usuario = "test_user";
+    const carta: Carta = {
+      id: 1, // Utilizando el mismo ID que la primera carta en la prueba anterior
+      nombre: "Carta con ID Duplicado",
+      costeMana: 6,
+      color: Color.Incoloro,
+      Lineatipo: LineaTipo.Artefacto,
+      rareza: Rareza.Rara,
+      textoReglas: "Texto de reglas de carta con ID duplicado",
+      valorMercado: 15,
+    };
+
+    // Forzar un error al intentar guardar la carta
+    // Simulando una situación en la que el ID de la carta ya está en uso
     // Esto debería proporcionar un mensaje de error
     GuardarCarta(usuario, carta, (error, mensaje) => {
       expect(error).to.not.be.undefined; // Debe haber un error
