@@ -25,21 +25,27 @@ export const GuardarCarta = (
             undefined,
           );
         } else {
-          fs.writeFile("message.txt", JSON.stringify(carta), (err) => {
+          fs.writeFile(rutaCarta, JSON.stringify(carta), (err) => {
             if (err) {
               callback(`Error al guardar la carta: ${err.message}`, undefined);
             } else {
-              callback(undefined, "The file has been saved!");
+              callback(
+                undefined,
+                `Se ha creado el directorio y guardado correctamente en el usuario: ${usuario}`,
+              );
             }
           });
         }
       });
     } else {
-      fs.writeFile("message.txt", JSON.stringify(carta), (err) => {
+      fs.writeFile(rutaCarta, JSON.stringify(carta), (err) => {
         if (err) {
           callback(`Error al guardar la carta: ${err.message}`, undefined);
         } else {
-          callback(undefined, "The file has been saved!");
+          callback(
+            undefined,
+            `Se ha guardado correctamente en el usuario:  ${usuario}`,
+          );
         }
       });
     }
