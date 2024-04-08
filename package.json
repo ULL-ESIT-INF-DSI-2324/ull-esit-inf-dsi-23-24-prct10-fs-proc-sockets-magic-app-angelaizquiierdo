@@ -2,10 +2,10 @@
   "name": "ull-esit-inf-dsi-23-24-prct10-fs-proc-sockets-magic-app-angelaizquiierdo",
   "version": "1.0.0",
   "description": "[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/7bX30zK4)",
-  "main": "index.js",
+  "main": "modificacion/app.js",
   "type": "module",
   "scripts": {
-    "dev": "tsc-watch --onSuccess \"node dist/ejercicio-1/cliente.js\"",
+    "dev": "tsc-watch --onSuccess \"node dist/modificacion/app.js\"",
     "doc": "typedoc",
     "test": "mocha",
     "coverage": "c8 npm test && c8 report --reporter=lcov"
@@ -28,6 +28,7 @@
     "typedoc": "^0.25.12"
   },
   "dependencies": {
+    "axios": "^1.6.8",
     "chalk": "^5.3.0",
     "yargs": "^17.7.2"
   }
