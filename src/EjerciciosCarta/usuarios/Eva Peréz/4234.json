@@ -1,0 +1,12 @@
+{
+  "id": 4234,
+  "nombre": "nombre_carta",
+  "costeMana": 3,
+  "color": "Azul",
+  "Lineatipo": "Criatura",
+  "rareza": "Rara",
+  "textoReglas": "Descripción de las reglas",
+  "valorMercado": 34,
+  "fuerza": 4,
+  "resistencia": 3
+}

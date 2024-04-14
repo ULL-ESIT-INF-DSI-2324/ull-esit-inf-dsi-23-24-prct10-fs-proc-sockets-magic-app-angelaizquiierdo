@@ -1,6 +1,9 @@
 import { EventEmitter } from "events";
 
 export class MessageEventEmitterClient extends EventEmitter {
+  static createServer(arg0: (connection: any) => void) {
+    throw new Error("Method not implemented.");
+  }
   constructor(connection: EventEmitter) {
     super();
 

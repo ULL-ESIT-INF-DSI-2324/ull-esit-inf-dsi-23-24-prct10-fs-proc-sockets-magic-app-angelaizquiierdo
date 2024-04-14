@@ -1,1 +1,5 @@
+<<<<<<< HEAD
 {"id":1,"nombre":"Carta con ID Duplicado","costeMana":6,"color":"Incoloro","Lineatipo":"Artefacto","rareza":"Rara","textoReglas":"Texto de reglas de carta con ID duplicado","valorMercado":15}
+=======
+{"id":1,"nombre":"Carta de Prueba","costeMana":2,"color":"Azul","Lineatipo":"Criatura","rareza":"Rara","textoReglas":"Texto de reglas de prueba","valorMercado":5}
+>>>>>>> b6815eb (subir)
