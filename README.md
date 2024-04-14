@@ -209,3 +209,131 @@ Tenemos que instalar el paquete `@types/node` como dependencia de desarrollo par
 Siguiendo la practica 9 presenta un completo **gestor de cartas de Magic** con el fin de administrar las colecciones de cartas, en esta caso es una aplicación de servidor-cliente. En donde cada uno de los usuarios puede añadir cartas nuevas, actualizar de las cartas existentes, eliminar cartas y mostrar las cartas presentes en la colección o una carta individual de un usuario.
 
 
+### Cliente.ts
+
+Lo primero que hago es importar los modulos yargs, chalk, net, y tus propios módulos para manejar las cartas de Magic, luego defino los  yargs.command() para definir cada comando que el cliente puede ejecutar como hecho en la práctica 9. Y para que funcione el cliente-servidor, lo primero que hago es configurar la conexión TCP:
+
+```ts
+const cliente = net.connect({ port: 60300 }, () => { ... });// Establece una conexión TCP con el servidor en el puerto 60300.
+```
+
+Y el manejo de los eventos de conexion.
+`data`: para escuchar los datos recibidpr del servidor.
+`end`: se ejecuta cuando el servidor cierra la conexion
+`close`: se ejecuta cuando la conexion se cierre completamente un fin de mensaje.
+
+Interpreto los datos recibidos del servidor :Dependiendo del tipo de respuesta del servidor (Error, Success, SuccessCartas, SuccessCarta), se muestra un mensaje correspondiente en la consola.
+
+### Servidor.ts
+
+Lo primero importar los módulos, luego defino mi clase `EventEmitterSocket`
+
+```ts
+export class EventEmitterSocket extends EventEmitter {
+  /**
+   * Constructor de la clase EventEmitterSocket.
+   * @param connection La conexión EventEmitter asociada.
+   */
+  constructor(connection: EventEmitter) {
+    super();
+    let wholeData = "";
+    connection.on("data", (dataChunk) => {
+      wholeData += dataChunk;
+
+      console.log("Datos recibidos del cliente: ", wholeData.toString());
+
+      try {
+        const peticion = JSON.parse(wholeData);
+        if (peticion) {
+          this.emit("peticion", peticion, connection);
+        }
+      } catch {
+        console.log("Error al parsear los datos.");
+      }
+    });
+
+    connection.on("close", () => {
+      this.emit("close");
+    });
+  }
+}
+```
+En mi clase constructor, establezco un listener para los eventos data y close de la conexión. Cuando se recibe un chunk de datos, se intenta parsear como JSON y, si tiene éxito, se emite el evento peticion con los datos parseados y la conexión asociada.
+
+Luego creo un servidor TCP 
+
+```ts
+const server = net.createServer((connection) => {});
+```
+Que cuando se establece una conexión con un cliente, se instancia un objeto `EventEmitterSocket` asociado a esa conexión. Se define un listener para el evento peticion del objeto `EventEmitterSocket`. Y dependiendo del tipo de acción en la petición, se realiza la operación correspondiente utilizando las funciones importadas del archivo gestor_cartas.js.
+Cuando se recibe la respuesta de la operación, se envía de vuelta al cliente a través de la conexión, y luego se cierra la conexión.
+Se manejan los eventos close de la conexión en el servidor y se imprime un mensaje cuando un cliente se desconecta, y inicio el servidor escuchando por el puerto 60300.
+
+
+### gestor_cartas.ts
+Solo se ha cambiado con respecto a la practica 9 el hecho que sea funciones asincronas, con el uso de patrón callback.
+
+### cartas_magic.ts 
+
+Se ha mantenido igual con las enum y la intefaz, esta vez con la incorporación de una clase `Carta` aplicando el Principio de Responsabilidad Única ya que es la única responsabilidad representar una carta del juego Magic y proporcionar métodos relacionados con las características de esa carta.
+
+Y cambie la funcion de ImprimirCarta separar la lógica de impresión de la lógica de conversión del string JSON.  
+
+```ts
+
+export function ImprimirCarta(carta_string: string): void {
+  // Convertir el string a JSON
+  const carta_json = JSON.parse(carta_string);
+
+  // Suma de los atributos de las cartas
+  let resultado = "";
+  resultado += `Id: ${carta_json.id}\n`;
+  resultado += `Nombre: ${carta_json.nombre}\n`;
+  resultado += `Coste de maná: ${carta_json.costemana}\n`;
+  resultado += `Color: ${carta_json.color}\n`;
+  resultado += `Linea de tipo: ${carta_json.lineatipo}\n`;
+  resultado += `Rareza: ${carta_json.rareza}\n`;
+  resultado += `Texto de reglas: ${carta_json.reglas}\n`;
+
+  if (carta_json.lineatipo === "Criatura") {
+    // Mostrar la fuerza y resistencia de la criatura
+    resultado += `Fuerza/Resistencia: ${carta_json.fuerza}\n`;
+    resultado += `Resistencia: ${carta_json.resistencia}\n`;
+  }
+  if (carta_json.lineatipo === "Planeswalker") {
+    // Mostrar las marcas de lealtad del planeswalker
+    resultado += `Marcas de lealtad: ${carta_json.marcasLealtad}\n`;
+  }
+  resultado += `Valor de mercado: ${carta_json.valorMercado}\n`;
+
+  switch (
+    carta_json.color // Mostrar el color de la carta
+  ) {
+    case "Blanco":
+      console.log(chalk.white(resultado));
+      break;
+    case "Azul":
+      console.log(chalk.blue(resultado));
+      break;
+    case "Negro":
+      console.log(chalk.black(resultado));
+      break;
+    case "Rojo":
+      console.log(chalk.red(resultado));
+      break;
+    case "Verde":
+      console.log(chalk.green(resultado));
+      break;
+    case "Incoloro":
+      console.log(chalk.gray(resultado));
+      break;
+    case "Multicolor":
+      console.log(chalk.yellow(resultado));
+      break;
+    default:
+      console.log(chalk.red(`No existe esta ese color ${carta_json}`));
+      break;
+  }
+}
+
+```
